@@ -1,11 +1,13 @@
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
+
+# Copy entire project (Docker context is repo root)
 COPY pom.xml .
 COPY libs libs
-COPY apps/orchestrator-service apps/orchestrator-service
+COPY apps apps
+
 RUN apk add --no-cache maven && \
-    mvn -pl libs/shared-dto install -q -DskipTests && \
-    mvn -pl apps/orchestrator-service package -q -DskipTests -am
+    mvn -pl libs/shared-dto,apps/orchestrator-service package -q -DskipTests -am -also-make
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app

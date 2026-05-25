@@ -1,0 +1,9 @@
+.git
+**/node_modules
+**/target
+**/.next
+**/.env*
+*.md
+.idea
+.vscode
+.DS_Store
