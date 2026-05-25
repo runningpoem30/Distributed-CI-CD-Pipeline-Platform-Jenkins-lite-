@@ -402,14 +402,107 @@ export default function Dashboard() {
           {view === "pipeline" && (
             <div className="flex flex-col lg:flex-row h-[calc(100vh-72px)]">
               {/* YAML editor */}
-              <div className="lg:w-[360px] shrink-0 border-r border-white/[0.06] flex flex-col">
+              <div className="lg:w-[400px] shrink-0 border-r border-white/[0.06] flex flex-col">
                 <div className="p-4 border-b border-white/[0.06]">
                   <h3 className="text-[13px] font-semibold text-white mb-1">Pipeline Definition</h3>
-                  <p className="text-[11px] text-neutral-600">
-                    {selectedRepo ? `Building ${selectedRepo.name}` : "Select a repository first"}
+                  <p className="text-[11px] text-neutral-600 leading-relaxed">
+                    {selectedRepo ? `Building ${selectedRepo.name}` : "Select a repository first"} — define the shell commands to run on your code
                   </p>
                 </div>
-                <div className="flex-1 p-4">
+
+                {/* Template presets */}
+                <div className="px-4 pt-3 pb-2 border-b border-white/[0.06]">
+                  <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-medium mb-2">Quick templates</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "Node.js", icon: "⬢", yaml: `stages:
+  - name: Install Dependencies
+    commands:
+      - npm install
+
+  - name: Run Tests
+    commands:
+      - npm test
+
+  - name: Build
+    commands:
+      - npm run build` },
+                      { label: "Java", icon: "☕", yaml: `stages:
+  - name: Resolve Dependencies
+    commands:
+      - mvn dependency:resolve
+
+  - name: Compile & Test
+    commands:
+      - mvn clean compile
+      - mvn test
+
+  - name: Package
+    commands:
+      - mvn package -DskipTests` },
+                      { label: "Python", icon: "🐍", yaml: `stages:
+  - name: Install Dependencies
+    commands:
+      - pip install -r requirements.txt
+
+  - name: Run Tests
+    commands:
+      - python -m pytest
+
+  - name: Lint
+    commands:
+      - python -m flake8 . || true` },
+                      { label: "Go", icon: "🔷", yaml: `stages:
+  - name: Download Modules
+    commands:
+      - go mod download
+
+  - name: Build
+    commands:
+      - go build ./...
+
+  - name: Test
+    commands:
+      - go test ./...` },
+                      { label: "General", icon: "📂", yaml: `stages:
+  - name: Explore Repository
+    commands:
+      - ls -la
+      - git log --oneline -10
+
+  - name: Count Source Files
+    commands:
+      - echo "--- File counts ---"
+      - find . -name "*.js" -o -name "*.ts" -o -name "*.java" -o -name "*.py" -o -name "*.go" | wc -l` },
+                    ].map((t) => (
+                      <button
+                        key={t.label}
+                        onClick={() => setPipelineYaml(t.yaml)}
+                        className="px-2.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-md text-[11px] text-neutral-400 hover:text-white transition-all flex items-center gap-1.5"
+                      >
+                        <span>{t.icon}</span>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Help hint */}
+                <div className="px-4 pt-2 pb-1">
+                  <details className="group">
+                    <summary className="text-[10px] text-neutral-600 cursor-pointer hover:text-neutral-400 transition-colors select-none">
+                      💡 What goes here?
+                    </summary>
+                    <div className="mt-2 p-3 bg-white/[0.02] rounded-lg text-[11px] text-neutral-500 leading-relaxed space-y-1.5">
+                      <p>Write the <span className="text-neutral-300">terminal commands</span> you want ForgeCI to run on your code — the same commands you&apos;d type in your terminal.</p>
+                      <p>ForgeCI will <span className="text-neutral-300">clone your repo</span>, then execute each command in order. If any command fails, the pipeline stops.</p>
+                      <p className="text-neutral-600 text-[10px]">Format: stages → name + list of commands (YAML)</p>
+                    </div>
+                  </details>
+                </div>
+
+                {/* YAML textarea */}
+                <div className="flex-1 p-4 pt-2">
                   <textarea
                     value={pipelineYaml}
                     onChange={(e) => setPipelineYaml(e.target.value)}
