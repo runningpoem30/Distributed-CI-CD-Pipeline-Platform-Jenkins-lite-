@@ -1,0 +1,14 @@
+# Next.js
+.next/
+out/
+node_modules/
+
+# Environment (contains GitHub OAuth + Upstash secrets)
+.env
+.env.local
+.env.*.local
+
+# Misc
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
