@@ -23,8 +23,8 @@ interface PipelineRun {
   duration: string;
 }
 
-const ORCHESTRATOR_URL = "http://localhost:8082";
-const WS_URL = "ws://localhost:8082";
+const ORCHESTRATOR_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8082";
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8082";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
