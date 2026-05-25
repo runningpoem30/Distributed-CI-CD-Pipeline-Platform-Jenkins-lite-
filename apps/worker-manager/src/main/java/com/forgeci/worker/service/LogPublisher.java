@@ -18,14 +18,16 @@ import java.util.Map;
 public class LogPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(LogPublisher.class);
-    private static final String ORCHESTRATOR_URL = "http://localhost:8082";
 
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
+    private final String orchestratorUrl;
 
-    public LogPublisher(StringRedisTemplate redisTemplate) {
+    public LogPublisher(StringRedisTemplate redisTemplate,
+                        @org.springframework.beans.factory.annotation.Value("${orchestrator.url:http://localhost:8082}") String orchestratorUrl) {
         this.redisTemplate = redisTemplate;
         this.restTemplate = new RestTemplate();
+        this.orchestratorUrl = orchestratorUrl;
     }
 
     /**
@@ -49,7 +51,7 @@ public class LogPublisher {
         // Also update Postgres via orchestrator API
         try {
             restTemplate.put(
-                ORCHESTRATOR_URL + "/api/v1/pipelines/" + executionId + "/status",
+                orchestratorUrl + "/api/v1/pipelines/" + executionId + "/status",
                 Map.of("status", status)
             );
         } catch (Exception e) {
