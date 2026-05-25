@@ -31,9 +31,12 @@ public class LogPublisher {
     }
 
     /**
-     * Publish a log line — both to pub/sub (live) and list (persistence).
+     * Publish a log line — both to pub/sub (live), list (persistence), and container console.
      */
     public void publishLog(String executionId, String message) {
+        // Print to standard container logs so we can see it in 'docker compose logs'
+        log.info("[{}] {}", executionId, message);
+
         String channel = "forgeci:logs:" + executionId;
         String storeKey = "forgeci:logstore:" + executionId;
 
